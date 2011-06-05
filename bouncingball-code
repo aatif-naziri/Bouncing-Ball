@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Bouncing Ball</title>
+  <style>
+    form{
+      width:330px;
+      margin:20px;
+      background-color: red;
+      padding: 20px;
+    }
+  </style>
+
+  <script type="text/javascript">
+
+    var rectX = 20;  //initial x position of rectangle
+    var rectY = 30;  //initial y position of rectangle
+    var rectWd = 300;  // width of rectangle
+    var rectHt = 200; //height of rectangle
+
+    var ballX = 50;  //initial x coordinate for the center of the ball
+    var ballY = 60;  //initial y coordinate for the center of the ball 
+    var ballRad = 10; //radius of the ball
+    var ballDisX = 4; //horizontal velocity of the ball
+    var ballDisY = 8; //vertical velocity of the ball
+
+    var rightBoundary = rectWd + rectX - ballRad;  
+    var leftBoundary = rectX + ballRad; 
+    var bottomBoundary = rectHt + rectY - ballRad; 
+    var topBoundary = rectY + ballRad;  
+
+    var canvas;
+    var context;
+
+    function init() {
+
+      canvas = document.getElementById('my_canvas'); //find the canvas element with id my_canvas in the DOM
+      context = canvas.getContext('2d'); //get the 2d drawing context of the canvas
+      context.lineWidth = ballRad; //set the line width equal to the radius of the ball
+      moveBall();
+      setInterval(moveBall, 100); 
+
+   }
+
+   function moveBall() {
+
+     context.clearRect(rectX, rectY, rectWd, rectHt);  // erase the rectangle
+     setPosition(); //calculates the x and y position of the ball
+     context.beginPath();
+     context.fillStyle = "rgb(250, 50, 50)"; //set the color of the ball
+     context.arc(ballX, ballY, ballRad, 0, Math.PI*2, true);// setup the coordinates for drawing the ball
+     context.fill(); // draw the ball
+     context.strokeRect(rectX, rectY, rectWd, rectHt); //draws the outline of rectangle
+  }
+
+  function setPosition() {
+
+     var ballNewX = ballX + ballDisX; //temporary new x coordinate of the ball 
+     var ballNewY = ballY + ballDisY; // temporary new y coordinate of the ball
+
+     if (ballNewX > rightBoundary) { //check if the x position goes past the right boundary. 
+      
+        ballNewX = rightBoundary; // set the new x position of ball to the right boundary of rectangle
+        ballDisX = -ballDisX; // reverse the horizontal the velocity of the ball
+     }
+
+    if (ballNewX < leftBoundary) { // check for when the x position exceeds the left boundary.
+  
+        ballNewX = leftBoundary; // set the new x position to the left boundary of rectangle
+        ballDisX = -ballDisX;  // reverse the horizontal velocity
+    }
+
+    if (ballNewY > bottomBoundary) { //check for when the y position exceeds the bottom boundary.
+  
+        ballNewY = bottomBoundary; // set the new y position to the bottom boundary 
+        ballDisY = -ballDisY; // reduce the vertical velocity
+    }
+
+    if (ballNewY < topBoundary) { //check for when the y position exceeds the top boundary
+ 
+        ballNewY = topBoundary; //set the new y position to the top boundary
+        ballDisY = -ballDisY; // reduce the vertical velocity
+    }
+
+    ballX = ballNewX; // set the x position of the ball to the new calculated x position
+    ballY = ballNewY; // set the y postion of the ball to the new calculated y position
+  }
+
+  function change() { // changes the horizontal and vertical velocity as per user input on the form
+  
+    ballDisX = Number(f.hv.value);
+    ballDisY = Number(f.vv.value);
+    return false;
+  }
+
+  </script>
+</head>
+
+<body onLoad="init();">
+
+  <canvas id="my_canvas" width = "400" height ="300">
+    Your canvas doesn't support HTML5 
+  </canvas>
+
+  <br/>
+  <br/>
+
+  <form name="f" id="f" onSubmit="return change();">
+
+  <!--Form validation done by setting input type as number and using min and max to set a range of values-->
+
+    Horizontal Velocity <input name ="hv" id = "hv" value ="4" type ="number" min = "-10" max = "10" />
+
+    <br>
+
+   Vertical Velocity <input name = "vv" id="vv" value = "8" type = "number" min = "-10" max = "10" />
+
+   <input type= "submit" value= "CHANGE"/>
+
+  </form>
+</body>
+</html>
